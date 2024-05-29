@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Server.Controllers
 {
-    [ApiController]
+    [ApiController()]
     [Route("[controller]")]
     public class GreetingController : ControllerBase
     {
