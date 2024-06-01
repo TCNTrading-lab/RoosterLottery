@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Server.model;
 using System.ComponentModel.DataAnnotations;
 
 namespace Server.Controllers

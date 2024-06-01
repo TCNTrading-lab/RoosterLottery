@@ -21,8 +21,8 @@ namespace Client
 
         private async void button1_Click(object sender, EventArgs e)
         {
-            GreetingService s = new GreetingService();
-            string? message = await s.GetGreetingMessage();
+            PlayerService s = new PlayerService();
+            string? message = await s.GetPlayer();
             if (message != null)
             {
                 MessageBox.Show(message);

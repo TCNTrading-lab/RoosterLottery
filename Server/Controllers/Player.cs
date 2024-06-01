@@ -1,4 +1,4 @@
-﻿namespace Server.model
+﻿namespace Server.Controllers
 {
     public class Player
     {

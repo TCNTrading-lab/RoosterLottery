@@ -1,5 +1,4 @@
 ﻿
-using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using Client.Models;
@@ -8,7 +7,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Client.Services
 {
-    internal class GreetingService
+    internal class PlayerService
     {
         private readonly HttpClient _client;
         private readonly JsonSerializerOptions options = new JsonSerializerOptions
@@ -17,23 +16,26 @@ namespace Client.Services
             WriteIndented = true
         };
 
-        internal GreetingService()
+        internal PlayerService()
         {
             _client = new HttpClient();
             _client.BaseAddress = new Uri("https://localhost:7266/");
         }
 
-        internal async Task<string?> GetGreetingMessage()
+        internal async Task<string?> GetPlayer()
         {
-
-            HttpResponseMessage response = await _client.GetAsync("/Player/findPlayer");
+            var obj = new
+            {
+                phoneNumber = "123",
+            };
+            var content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await _client.PostAsync("/Player/findPlayer", content);
 
             if (response.IsSuccessStatusCode)
             {
                 string responseBody = await response.Content.ReadAsStringAsync();
-
-                Greeting? greeting = JsonSerializer.Deserialize<Greeting>(responseBody, options);
-                return greeting?.Message;
+                Player? player = JsonSerializer.Deserialize<Player>(responseBody);
+                return player?.FullName;
             }
             else
             {
