@@ -19,14 +19,14 @@ namespace Client.Services
         internal PlayerService()
         {
             _client = new HttpClient();
-            _client.BaseAddress = new Uri("https://localhost:7266/");
+            _client.BaseAddress = new Uri("http://localhost:5000/");
         }
 
-        internal async Task<string?> GetPlayer()
+        internal async Task<Player?> GetPlayer(string phoneNum)
         {
             var obj = new
             {
-                phoneNumber = "123",
+                phoneNumber = phoneNum,
             };
             var content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
             HttpResponseMessage response = await _client.PostAsync("/Player/findPlayer", content);
@@ -34,13 +34,91 @@ namespace Client.Services
             if (response.IsSuccessStatusCode)
             {
                 string responseBody = await response.Content.ReadAsStringAsync();
-                Player? player = JsonSerializer.Deserialize<Player>(responseBody);
-                return player?.FullName;
+                List<Player>? player = JsonSerializer.Deserialize<List<Player>>(responseBody);
+                if (player.Count != 0)
+                    return player[0];
+                else
+                    return null;
             }
             else
             {
                 throw new Exception($"Error: {response.StatusCode}");
             }
         }
+
+        internal async Task<bool> CreatePlayer(Player player)
+        {
+
+            var content = new StringContent(JsonConvert.SerializeObject(player), Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await _client.PostAsync("/Player/createPlayer", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string responseBody = await response.Content.ReadAsStringAsync();
+                ResponseCreatePlayer? msg = JsonSerializer.Deserialize<ResponseCreatePlayer>(responseBody);
+                if (msg.status)
+                    return true;
+                else
+                    return false;
+            }
+            else
+            {
+                throw new Exception($"Error: {response.StatusCode}");
+            }
+        }
+        internal async Task<bool> PlayerBet(int userId, int betNumber)
+        {
+            var obj = new
+            {
+                userId = userId,
+                betNumber = betNumber
+            };
+            var content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await _client.PostAsync("/Player/bet", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string responseBody = await response.Content.ReadAsStringAsync();
+                ResponseCreatePlayer? msg = JsonSerializer.Deserialize<ResponseCreatePlayer>(responseBody);
+                return true;
+            }
+            else
+            {
+                //response.RequestMessage;
+                return false;
+            }
+        }
+
+        internal async Task<List<BoardBet>>  LoadBoardBet(int playerId){
+  
+            HttpResponseMessage response = await _client.GetAsync("/Player/GetBoardBet?playerId=" + playerId);
+            string responseBody = await response.Content.ReadAsStringAsync();
+            List<BoardBet> bb = JsonSerializer.Deserialize<List<BoardBet>>(responseBody);
+            return bb;
+        }
+
+        public class ResponseCreatePlayer
+        {
+
+            public string message { get; set; }
+            public bool status { get; set; }
+
+        }
+        public class BoardBet
+        {
+
+            public int id { get; set; }
+            public string fullName { get; set; }
+            public DateTime dateOfBirth { get; set; }
+            public string phoneNumber { get; set; }
+            public int betID { get; set; }
+            public DateTime drawTime { get; set; }
+            public int? betNumber { get; set; }
+            public int? resultNumber { get; set; }
+            public int? isWinner { get; set; }
+
+        }
+
+
     }
 }

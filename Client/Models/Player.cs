@@ -8,8 +8,11 @@ namespace Client.Models
 {
     public class Player
     {
-        public string FullName { get; set; }
-        public DateTime DateOfBirth { get; set; }
-        public string PhoneNumber { get; set; }
+        public int id { get; set; }
+        public string fullName { get; set; }
+        public DateTime dateOfBirth { get; set; }
+        public string phoneNumber { get; set; }
     }
 }
+//chức năng tìm người win, điền vào
+//chức năng load ván mới chưa ai đoán
