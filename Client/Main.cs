@@ -57,6 +57,7 @@ namespace Client
                 dateTimePicker1.Value = DateTime.Now;
                 setStateControl(true);
                 setStateControlDatCuoc(false);
+                clearDbGridView();
             }
 
         }
@@ -65,6 +66,10 @@ namespace Client
             PlayerService s = new PlayerService();
             var boardBets  = await s.LoadBoardBet(_player.id);
             dataGridView1.DataSource = boardBets;
+        }
+        void clearDbGridView()
+        {
+            dataGridView1.DataSource = null;
         }
         Player getPlayerFromUI()
         {
