@@ -97,6 +97,12 @@ namespace Client
 
         private async void button3_Click(object sender, EventArgs e)
         {
+            var now = DateTime.Now;
+            if (now.Minute == 0)
+            {
+                MessageBox.Show("Cược thất bại do đang ở phút đầu tiên của giờ");
+                return;
+            }
             PlayerService s = new PlayerService();
             decimal betNumber = numericUpDown1.Value;
             var i = (int) betNumber;
