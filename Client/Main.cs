@@ -1,6 +1,6 @@
 ﻿using Client.Models;
 using Client.Services;
-using static Client.Services.PlayerService;
+using System.Text.RegularExpressions;
 
 namespace Client
 {
@@ -85,6 +85,15 @@ namespace Client
         {
             PlayerService s = new PlayerService();
             Player? player =  getPlayerFromUI();
+
+
+            //bool q = checkValidPhoneNumber(player.phoneNumber);
+            //q = true;
+            //if (q)
+            //{
+                
+            //}
+
             bool p = await s.CreatePlayer(player);
             _player = await s.GetPlayer(player.phoneNumber);
             if (p == true)
@@ -92,9 +101,22 @@ namespace Client
                 setStateControl(false);
                 setStateControlDatCuoc(true);
             }
-
         }
-
+        bool checkValidPhoneNumber(string phoneNumber)
+        {
+            string pattern = @"^(0[3|5|7|8|9])+([0-9]{8})$";
+            Regex regex = new Regex(pattern);
+            bool isValid = regex.IsMatch(phoneNumber);
+            if (isValid)
+            {
+                return true;
+            }
+            else
+            {
+                MessageBox.Show("Số điện thoại không hợp lệ.");
+                return false;
+            }
+        }
         private async void button3_Click(object sender, EventArgs e)
         {
             //var now = DateTime.Now;
