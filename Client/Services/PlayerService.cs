@@ -1,4 +1,5 @@
 ﻿
+using System.Configuration;
 using System.Text;
 using System.Text.Json;
 using Client.Models;
@@ -18,8 +19,18 @@ namespace Client.Services
 
         internal PlayerService()
         {
+            string configFilePath = @".\App.config";
+            ExeConfigurationFileMap configFileMap = new ExeConfigurationFileMap
+            {
+                ExeConfigFilename = configFilePath
+            };
+            Configuration config = ConfigurationManager.OpenMappedExeConfiguration(configFileMap, ConfigurationUserLevel.None);
+
+            string host = config.AppSettings.Settings["Host"]?.Value ?? "localhost";
+            string port = config.AppSettings.Settings["Port"]?.Value ?? "5000";
             _client = new HttpClient();
-            _client.BaseAddress = new Uri("http://localhost:5000/");
+            string baseAddress = $"http://{host}:{port}/";
+            _client.BaseAddress = new Uri(baseAddress);
         }
 
         internal async Task<Player?> GetPlayer(string phoneNum)
@@ -115,7 +126,7 @@ namespace Client.Services
             public DateTime drawTime { get; set; }
             public int? betNumber { get; set; }
             public int? resultNumber { get; set; }
-            public int? isWinner { get; set; }
+            public bool? isWinner { get; set; }
 
         }
 

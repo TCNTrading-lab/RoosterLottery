@@ -4,10 +4,10 @@ using static Client.Services.PlayerService;
 
 namespace Client
 {
-    public partial class Login : Form
+    public partial class Main : Form
     {
         private Player _player;
-        public Login()
+        public Main()
         {
             InitializeComponent();
             setStateControl(false);

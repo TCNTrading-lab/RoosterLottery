@@ -1,6 +1,6 @@
 ﻿namespace Client
 {
-    partial class Login
+    partial class Main
     {
         /// <summary>
         ///  Required designer variable.
