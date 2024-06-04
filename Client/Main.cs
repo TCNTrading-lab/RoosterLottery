@@ -14,15 +14,6 @@ namespace Client
             setStateControlDatCuoc(false);
         }
 
-        private void Login_Load(object sender, EventArgs e)
-        {
-           
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
         void setStateControl(bool state)
         {
             textBox2.Enabled = state;
@@ -86,14 +77,6 @@ namespace Client
             PlayerService s = new PlayerService();
             Player? player =  getPlayerFromUI();
 
-
-            //bool q = checkValidPhoneNumber(player.phoneNumber);
-            //q = true;
-            //if (q)
-            //{
-                
-            //}
-
             bool p = await s.CreatePlayer(player);
             _player = await s.GetPlayer(player.phoneNumber);
             if (p == true)
@@ -101,22 +84,12 @@ namespace Client
                 setStateControl(false);
                 setStateControlDatCuoc(true);
             }
-        }
-        bool checkValidPhoneNumber(string phoneNumber)
-        {
-            string pattern = @"^(0[3|5|7|8|9])+([0-9]{8})$";
-            Regex regex = new Regex(pattern);
-            bool isValid = regex.IsMatch(phoneNumber);
-            if (isValid)
-            {
-                return true;
-            }
             else
             {
-                MessageBox.Show("Số điện thoại không hợp lệ.");
-                return false;
+                MessageBox.Show("Tạo player thất bại");
             }
         }
+        
         private async void button3_Click(object sender, EventArgs e)
         {
             //var now = DateTime.Now;

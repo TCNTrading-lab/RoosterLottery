@@ -1,7 +1,6 @@
 ﻿
 using System.Configuration;
 using System.Text;
-using System.Text.Json;
 using Client.Models;
 using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -11,11 +10,8 @@ namespace Client.Services
     internal class PlayerService
     {
         private readonly HttpClient _client;
-        private readonly JsonSerializerOptions options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true,
-            WriteIndented = true
-        };
+
+        private readonly string playerPath = "api/Player";
 
         internal PlayerService()
         {
@@ -32,6 +28,11 @@ namespace Client.Services
             string baseAddress = $"http://{host}:{port}/";
             _client.BaseAddress = new Uri(baseAddress);
         }
+        string getPath(string slug)
+        {
+
+            return Path.Combine(playerPath, slug);
+        }
 
         internal async Task<Player?> GetPlayer(string phoneNum)
         {
@@ -40,7 +41,8 @@ namespace Client.Services
                 phoneNumber = phoneNum,
             };
             var content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _client.PostAsync("/Player/findPlayer", content);
+
+            HttpResponseMessage response = await _client.PostAsync(getPath("find"), content);
 
             if (response.IsSuccessStatusCode)
             {
@@ -61,7 +63,7 @@ namespace Client.Services
         {
 
             var content = new StringContent(JsonConvert.SerializeObject(player), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _client.PostAsync("/Player/createPlayer", content);
+            HttpResponseMessage response = await _client.PostAsync(getPath("create"), content);
 
             if (response.IsSuccessStatusCode)
             {
@@ -73,10 +75,10 @@ namespace Client.Services
                     return false;
             }
             else
-            {
-                throw new Exception($"Error: {response.StatusCode}");
-            }
+                return false;
         }
+
+
         internal async Task<bool> PlayerBet(int userId, int betNumber)
         {
             var obj = new
@@ -85,7 +87,7 @@ namespace Client.Services
                 betNumber = betNumber
             };
             var content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _client.PostAsync("/Player/bet", content);
+            HttpResponseMessage response = await _client.PostAsync(getPath("bet"), content);
 
             if (response.IsSuccessStatusCode)
             {
@@ -95,18 +97,21 @@ namespace Client.Services
             }
             else
             {
-                //response.RequestMessage;
                 return false;
             }
         }
 
-        internal async Task<List<BoardBet>>  LoadBoardBet(int playerId){
-  
-            HttpResponseMessage response = await _client.GetAsync("/Player/GetBoardBet?playerId=" + playerId);
+        internal async Task<List<BoardBet>> LoadBoardBet(int playerId)
+        {
+
+            HttpResponseMessage response = await _client.GetAsync(getPath("get-board-bets?playerId=" + playerId));
             string responseBody = await response.Content.ReadAsStringAsync();
             List<BoardBet> bb = JsonSerializer.Deserialize<List<BoardBet>>(responseBody);
             return bb;
         }
+
+
+
 
         public class ResponseCreatePlayer
         {
@@ -129,7 +134,9 @@ namespace Client.Services
             public bool? isWinner { get; set; }
 
         }
-
-
     }
 }
+
+
+
+
